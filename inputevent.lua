@@ -6,7 +6,7 @@ local options = require("mp.options")
 
 local o = {
     configs = "input.conf",
-    prefix = "@",
+    prefix = "event,@",
 }
 
 local bind_map = {}
@@ -394,12 +394,14 @@ function bind_from_conf(conf)
                     end
                 end
 
-                local event = comments[o.prefix]
-                if event and event ~= "" and supported_events[event] then
-                    if not kv[key] then
-                        kv[key] = {}
+                for _, prefix in ipairs(o.prefix:split(",")) do
+                    local event = comments[prefix]
+                    if event and event ~= "" and supported_events[event] then
+                        if not kv[key] then
+                            kv[key] = {}
+                        end
+                        kv[key][event] = cmd
                     end
-                    kv[key][event] = cmd
                 end
             end
         end

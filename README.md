@@ -5,7 +5,7 @@ This script enhanced `input.conf` with better, conflict-free, low-latency event 
 It allows mpv users to bind events by using this syntax in `input.conf`.
 
 ```ini
-KEY             command                             #@event
+KEY             command                             #event: event_name
 ```
 
 Now the supported events are:  
@@ -24,9 +24,9 @@ Compound events e.g. `click` will be emitted as soon as possible to get lowest l
 ### Click to pause, Double click to fullscreen
 
 ```ini
-MBTN_LEFT       cycle pause                         #@click
-MBTN_LEFT       cycle fullscreen                    #@double_click
-MBTN_LEFT_DBL   ignore                              # avoid conflicts
+MBTN_LEFT       cycle pause                         #event: click
+MBTN_LEFT       cycle fullscreen                    #event: double_click
+MBTN_LEFT_DBL   ignore
 ```
 
 Like Youtube, you can click to pause and double click to full screen.  
@@ -43,9 +43,9 @@ So here is the solution.
 ### Press to speedup, Release to restore
 
 ```ini
-SPACE           cycle pause                         #@click
-SPACE           no-osd set speed 4; set pause no    #@press
-SPACE           ignore                              #@release
+SPACE           cycle pause                         #event: click
+SPACE           no-osd set speed 4; set pause no    #event: press
+SPACE           ignore                              #event: release
 ```
 
 When you press the `SPACE` the playback speed will be 4x faster.  
@@ -58,18 +58,18 @@ I just personally prefer the space.
 if you want to use it while having custom keybind, this is an example of integrating it.
 
 ```ini
-RIGHT           seek 5                              #@click
-RIGHT           script-binding evafast/speedup      #@press
-RIGHT           script-binding evafast/slowdown     #@release
+RIGHT           seek 5                              #event: click
+RIGHT           script-binding evafast/speedup      #event: press
+RIGHT           script-binding evafast/slowdown     #event: release
 ```
 
 ### Press to maximize/minimize volume
 
 ```ini
-UP              add volume  10                      #@click
-UP              set volume  100                     #@press
-DOWN            add volume -10                      #@click
-DOWN            set volume  0                       #@press
+UP              add volume  10                      #event: click
+UP              set volume  100                     #event: press
+DOWN            add volume -10                      #event: click
+DOWN            set volume  0                       #event: press
 ```
 
 For the default volume adjustment, repeatedly pressing or holding is annoying, slow and imprecise.  
@@ -78,10 +78,10 @@ Now just one step, press.
 ### Click to next/prev chapter, Press to next/prev playlist item
 
 ```ini
-PGUP            add chapter -1                      #@click
-PGUP            playlist-prev                       #@press
-PGDWN           add chapter  1                      #@click
-PGDWN           playlist-next                       #@press
+PGUP            add chapter -1                      #event: click
+PGUP            playlist-prev                       #event: press
+PGDWN           add chapter  1                      #event: click
+PGDWN           playlist-next                       #event: press
 ```
 
 It's convenient for 65-key keyboard users like me.  
@@ -90,9 +90,9 @@ It's convenient for 65-key keyboard users like me.
 ### Press to display stats, Click to toggle
 
 ```ini
-i               script-binding stats/display-stats-toggle  #@click
-i               script-binding stats/display-stats         #@repeat
-i               script-binding stats/display-stats         #@press
+i               script-binding stats/display-stats-toggle  #event: click
+i               script-binding stats/display-stats         #event: repeat
+i               script-binding stats/display-stats         #event: press
 ```
 
 Click to toggle displaying information and statistics (as default `shift+i`).  
@@ -102,8 +102,8 @@ The press line is not required, it just reduces the latency (Very little).
 ### Press to show uosc UI
 
 ```ini
-MBTN_LEFT       script-message-to uosc set-min-visibility 1     #@press
-MBTN_LEFT       script-message-to uosc set-min-visibility 0     #@release
+MBTN_LEFT       script-message-to uosc set-min-visibility 1     #event: press
+MBTN_LEFT       script-message-to uosc set-min-visibility 0     #event: release
 ```
 
 Rather than click to show, click to hide it is more comfortable to show only when pressed.  
@@ -112,10 +112,10 @@ Requires [tomasklaen/uosc](https://github.com/tomasklaen/uosc).
 ### Handling repeat, Make it have a different event than click
 
 ```ini
-.               frame-step; show-text "${estimated-frame-number}"       #@click
-.               set pause no                                            #@press
-.               set pause yes; show-text "${estimated-frame-number}"    #@release
-.               show-text "${estimated-frame-number}"                   #@repeat
+.               frame-step; show-text "${estimated-frame-number}"       #event: click
+.               set pause no                                            #event: press
+.               set pause yes; show-text "${estimated-frame-number}"    #event: release
+.               show-text "${estimated-frame-number}"                   #event: repeat
 ```
 
 Here is an example of `frame-step`.  
@@ -125,8 +125,8 @@ But the press of the default is stuttering, now the playback is smooth.
 ### Handling raw press，Make it have different click, double click events
 
 ```ini
-PLAYPAUSE       cycle pause                         #@click
-PLAYPAUSE       playlist-next                       #@double_click
+PLAYPAUSE       cycle pause                         #event: click
+PLAYPAUSE       playlist-next                       #event: double_click
 ```
 
 Some headphones have a `PLAYPAUSE` button, click to play/pause and double click to play the next, just like some smart headphones.
@@ -152,7 +152,7 @@ Writing the ignore command in the release event will enable automatic restore.
 What if you just need to **ignore** the release? Just don't write the line of release event.
 
 ```ini
-KEY             ignore                              #@release
+KEY             ignore                              #event: release
 ```
 
 In this example [press-to-speedup-release-to-restore](https://github.com/natural-harmonia-gropius/input-event#press-to-speedup-release-to-restore).  
@@ -171,8 +171,8 @@ A warning will be given for unsupported commands, `command doesn't support auto 
 But that doesn't mean it doesn't work at all, It will restore the reversible part.
 
 ```ini
-SPACE           set speed 4; show-text 1            #@press
-SPACE           ignore                              #@release
+SPACE           set speed 4; show-text 1            #event: press
+SPACE           ignore                              #event: release
 ```
 
 In the above example, the speed will be restored, show-text cannot and will not be restored.
@@ -182,11 +182,11 @@ In the above example, the speed will be restored, show-text cannot and will not 
 Writing the ignore command in the repeat event will bring back the original behavior of repeat.
 
 ```ini
-UP              add volume 1                        #@click
-UP              ignore                              #@repeat
+UP              add volume 1                        #event: click
+UP              ignore                              #event: repeat
 ```
 
-In the above example, if you don't write `UP ignore #@repeat`, you'll have to press frequently, which is too tiring.
+In the above example, if you don't write `UP ignore #event: repeat`, you'll have to press frequently, which is too tiring.
 
 ## Extended support for property-expansion
 
@@ -197,10 +197,10 @@ The original property-expansion can only work for strings, but now supports inse
 This is a example of a smoother speedup.
 
 ```ini
-SPACE           cycle pause                                                                 #@click
-SPACE           no-osd set speed 1; set pause no                                            #@press
-SPACE           ignore                                                                      #@release
-SPACE           no-osd add speed ${?speed==4.00:0}${!speed==4.00:0.1}; show-text ${speed}   #@repeat
+SPACE           cycle pause                                                                 #event: click
+SPACE           no-osd set speed 1; set pause no                                            #event: press
+SPACE           ignore                                                                      #event: release
+SPACE           no-osd add speed ${?speed==4.00:0}${!speed==4.00:0.1}; show-text ${speed}   #event: repeat
 ```
 
 ## Support for multiple configuration files
@@ -216,16 +216,16 @@ script-opts-add=inputevent-configs="input.conf,~~/test.conf,~~/test.json"
 input.conf
 
 ```ini
-SPACE           cycle pause                         #@click
-SPACE           set speed  2.0                      #@press
-SPACE           set speed  1.0                      #@release
+SPACE           cycle pause                         #event: click
+SPACE           set speed  2.0                      #event: press
+SPACE           set speed  1.0                      #event: release
 ```
 
 test.conf
 
 ```ini
-SPACE           set speed  0.5                      #@press
-SPACE           set speed  1.0                      #@release
+SPACE           set speed  0.5                      #event: press
+SPACE           set speed  1.0                      #event: release
 ```
 
 test.json
