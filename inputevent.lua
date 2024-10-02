@@ -12,13 +12,13 @@ local o = {
 local bind_map = {}
 
 local event_pattern = {
-    { to = "penta_click", from = "down,up,down,up,down,up,down,up,down,up", length = 10 },
-    { to = "quatra_click", from = "down,up,down,up,down,up,down,up", length = 8 },
-    { to = "triple_click", from = "down,up,down,up,down,up", length = 6 },
-    { to = "double_click", from = "down,up,down,up", length = 4 },
-    { to = "click", from = "down,up", length = 2 },
-    { to = "press", from = "down", length = 1 },
-    { to = "release", from = "up", length = 1 },
+    { to = "penta_click",  from = "down,up,down,up,down,up,down,up,down,up", length = 10 },
+    { to = "quatra_click", from = "down,up,down,up,down,up,down,up",         length = 8 },
+    { to = "triple_click", from = "down,up,down,up,down,up",                 length = 6 },
+    { to = "double_click", from = "down,up,down,up",                         length = 4 },
+    { to = "click",        from = "down,up",                                 length = 2 },
+    { to = "press",        from = "down",                                    length = 1 },
+    { to = "release",      from = "up",                                      length = 1 },
 }
 
 local supported_events = {
@@ -119,7 +119,7 @@ function now()
 end
 
 function command(command)
-    if not command or command == '' then return true end
+    if not command or command == "" then return true end
     return mp.command(command)
 end
 
@@ -249,9 +249,9 @@ function InputEvent:emit(event)
         return
     end
 
-    local expand = mp.command_native({ 'expand-text', cmd })
+    local expand = mp.command_native({ "expand-text", cmd })
     if #command_split(cmd) == #command_split(expand) then
-        cmd = mp.command_native({ 'expand-text', cmd })
+        cmd = mp.command_native({ "expand-text", cmd })
     else
         mp.msg.warn("Unsafe property-expansion: " .. cmd)
     end
